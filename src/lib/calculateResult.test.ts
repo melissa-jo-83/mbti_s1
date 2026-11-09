@@ -1,0 +1,8 @@
+import {describe,it,expect} from 'vitest';import{calculateResult}from'./calculateResult';import{questions}from'../data/questions';import{characters}from'../data/characters';
+describe('검사 명세',()=>{
+ it('12문항, 4선택지, 지표별 각 2개씩 정확히 매핑한다',()=>{expect(questions).toHaveLength(12);questions.forEach((q,i)=>{expect(q.id).toBe(i+1);expect(q.options).toHaveLength(4);const d=['EI','SN','TF','JP'][i%4];q.options.forEach((o,j)=>{expect(o.dimension).toBe(d);expect(o.trait).toBe(d[j%2]);});});});
+ it('16유형에 모두 도달하고 각각 캐릭터가 있다',()=>{for(const a of 'EI')for(const b of 'SN')for(const c of 'TF')for(const d of 'JP'){const type=a+b+c+d;const ans=questions.map(q=>q.options.find(o=>type.includes(o.trait))!.id);const result=calculateResult(ans);expect(result.mbti).toBe(type);expect(characters[type].mbti).toBe(type);for(const t of type)expect(result.scores[t]).toBe(3);}expect(Object.keys(characters)).toHaveLength(16);});
+ it('답변 변경은 기존 답변을 대체하며 비율 합은 3이다',()=>{const a=Array(12).fill('A');a[0]='B';a[4]='D';const r=calculateResult(a);expect(r.mbti).toBe('ISTJ');expect(r.scores.E).toBe(1);expect(r.scores.I).toBe(2);expect(r.scores.E+r.scores.I).toBe(3);});
+ it('누락·잘못된 답변으로 결과를 만들지 않는다',()=>{for(const a of [[],Array(11).fill('A'),Array(12).fill(null),Array(12).fill('X'),Array(13).fill('A')])expect(()=>calculateResult(a)).toThrow();});
+ it('모든 파트너와 고유 ID가 유효하다',()=>{const cs=Object.values(characters);expect(new Set(cs.map(c=>c.id)).size).toBe(16);cs.forEach(c=>{expect(characters[c.best]).toBeTruthy();expect(characters[c.worst]).toBeTruthy();expect(c.intro.length).toBeLessThanOrEqual(30);expect(c.description.length).toBeGreaterThanOrEqual(100);expect(c.description.length).toBeLessThanOrEqual(150);});});
+});

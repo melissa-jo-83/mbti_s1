@@ -1,0 +1,3 @@
+export function resultUrl(type:string){return new URL(`${import.meta.env.BASE_URL}share/${type}/`,location.origin).href;}
+export async function copyLink(type:string){const text=resultUrl(type);if(navigator.clipboard){await navigator.clipboard.writeText(text);return;}const a=document.createElement('textarea');a.value=text;document.body.append(a);a.select();const ok=document.execCommand('copy');a.remove();if(!ok)throw new Error('링크 복사가 지원되지 않습니다. 주소창의 링크를 복사해 주세요.');}
+export async function shareResult(type:string,text:string){if(navigator.share){try{await navigator.share({title:'쓸데없는 초능력 연구소',text,url:resultUrl(type)});return '공유 창을 열었습니다.';}catch(e){if((e as Error).name==='AbortError')return '';}}await copyLink(type);return '결과 링크를 복사했습니다.';}

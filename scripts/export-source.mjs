@@ -1,0 +1,2 @@
+import fs from 'node:fs';import path from 'node:path';import{zipSync}from'fflate';
+const files={};function walk(dir=''){for(const item of fs.readdirSync(dir||'.',{withFileTypes:true})){if(['node_modules','.git','dist','work'].includes(item.name)||item.name.endsWith('.tar.gz'))continue;const name=path.posix.join(dir,item.name);if(item.isDirectory())walk(name);else files['useless-power-lab/'+name]=new Uint8Array(fs.readFileSync(name));}}walk();fs.writeFileSync('dist/source.zip',zipSync(files,{level:6}));console.log('Packaged source.zip');

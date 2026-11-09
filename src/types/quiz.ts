@@ -1,0 +1,1 @@
+export type Answers = (string | null)[]; export type Scores = Record<string,number>; export interface Character {id:string;mbti:string;name:string;power:string;intro:string;description:string;usage:string;sideEffect:string;evaluation:string;traits:string[];best:string;worst:string;bestReason:string;worstReason:string;shareText:string;}
